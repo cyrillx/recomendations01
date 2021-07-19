@@ -1,11 +1,8 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class Alarm : MonoBehaviour
 {
-    [SerializeField] private UnityEvent _penetration;
     [SerializeField] private float _deltaVolume;
     [SerializeField] private AudioSource _alarmSound;
 
@@ -14,21 +11,32 @@ public class Alarm : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        _targetVolume = 1f;
-        _alarmSound.Play();
-        _alarmSound.loop = true;
+        StartFading(1f);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        _targetVolume = 0f;
+        StartFading(0f);
     }
 
-    private void Update()
+    private void StartFading(float targetVolume)
     {
-        _currentVolume = Mathf.MoveTowards(_currentVolume, _targetVolume, _deltaVolume);
-        _alarmSound.volume = _currentVolume;
-        if (_currentVolume == 0)
+        _targetVolume = targetVolume;
+        if(_alarmSound.isPlaying == false)
+            _alarmSound.Play();
+        _alarmSound.loop = true;
+        StartCoroutine(SmoothFade());
+    }
+
+    private IEnumerator SmoothFade()
+    {
+        while(_currentVolume != _targetVolume)
+        {
+            _currentVolume = Mathf.MoveTowards(_currentVolume, _targetVolume, _deltaVolume);
+            _alarmSound.volume = _currentVolume;
+            yield return null;
+        }
+        if(_currentVolume == 0)
             _alarmSound.loop = false;
     }
 }
