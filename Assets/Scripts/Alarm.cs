@@ -3,32 +3,36 @@ using UnityEngine;
 
 public class Alarm : MonoBehaviour
 {
-    [SerializeField] private float _deltaVolume;
     [SerializeField] private AudioSource _alarmSound;
+    [SerializeField] private float _deltaVolume;
 
-    private float _currentVolume = 0;
+    private float _currentVolume;
     private float _targetVolume;
+    private float _fullVolume = 1f;
+    private float _disabledVolume = 0f;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        StartFading(1f);
+        FadeTo(_fullVolume);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        StartFading(0f);
+        FadeTo(_disabledVolume);
     }
 
-    private void StartFading(float targetVolume)
+    private void FadeTo(float targetVolume)
     {
         _targetVolume = targetVolume;
-        if(_alarmSound.isPlaying == false)
+
+        if (_alarmSound.isPlaying == false)
             _alarmSound.Play();
+
         _alarmSound.loop = true;
-        StartCoroutine(SmoothFade());
+        StartCoroutine(FadeVolumeSmooth());
     }
 
-    private IEnumerator SmoothFade()
+    private IEnumerator FadeVolumeSmooth()
     {
         while(_currentVolume != _targetVolume)
         {
@@ -36,7 +40,8 @@ public class Alarm : MonoBehaviour
             _alarmSound.volume = _currentVolume;
             yield return null;
         }
-        if(_currentVolume == 0)
+
+        if (_currentVolume == 0)
             _alarmSound.loop = false;
     }
 }

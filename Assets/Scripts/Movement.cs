@@ -2,30 +2,28 @@
 
 public class Movement : MonoBehaviour
 {
-    [SerializeField] private float _speed;
     [SerializeField] private SpriteRenderer _spriteRenderer;
+    [SerializeField] private float _speed;
+
+    private float _rightDirection = 1f;
+    private float _leftDirection = -1f;
 
     private void Update()
     {
         if (Input.GetKey(KeyCode.D))
-        {
-            HorizontalMove(1f);
-        }
+            MoveHorizontal(_rightDirection);
+
         if (Input.GetKey(KeyCode.A))
-        {
-            HorizontalMove(-1f);
-        }
+            MoveHorizontal(_leftDirection);
+
         if (Input.GetKeyDown(KeyCode.D))
-        {
             _spriteRenderer.flipX = false;
-        }
+
         if (Input.GetKeyDown(KeyCode.A))
-        {
             _spriteRenderer.flipX = true;
-        }
     }
 
-    private void HorizontalMove(float direction)
+    private void MoveHorizontal(float direction)
     {
         transform.Translate(_speed * Time.deltaTime * direction, 0, 0);
     }
