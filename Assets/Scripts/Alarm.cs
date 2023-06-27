@@ -8,20 +8,8 @@ public class Alarm : MonoBehaviour
 
     private float _currentVolume;
     private float _targetVolume;
-    private float _fullVolume = 1f;
-    private float _disabledVolume = 0f;
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        FadeTo(_fullVolume);
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        FadeTo(_disabledVolume);
-    }
-
-    private void FadeTo(float targetVolume)
+    public void FadeTo(float targetVolume)
     {
         _targetVolume = targetVolume;
 
