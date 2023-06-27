@@ -6,18 +6,37 @@ public class Alarm : MonoBehaviour
     [SerializeField] private AudioSource _alarmSound;
     [SerializeField] private float _deltaVolume;
 
+    private Coroutine _fadeCoroutine;
     private float _currentVolume;
     private float _targetVolume;
+    private float _fullVolume = 1f;
+    private float _disabledVolume = 0f;
 
-    public void FadeTo(float targetVolume)
+    public void SetEnable(bool newState)
     {
+        if (newState == true)
+            FadeTo(_fullVolume);
+        else
+            FadeTo(_disabledVolume);
+    }
+
+    private void FadeTo(float targetVolume)
+    {
+        if(_fadeCoroutine != null)
+            StopCoroutine(_fadeCoroutine);
+
         _targetVolume = targetVolume;
 
         if (_alarmSound.isPlaying == false)
             _alarmSound.Play();
 
         _alarmSound.loop = true;
-        StartCoroutine(FadeVolumeSmooth());
+        _fadeCoroutine = StartCoroutine(FadeVolumeSmooth());
+    }
+
+    private void Start()
+    {
+        _fadeCoroutine = null;
     }
 
     private IEnumerator FadeVolumeSmooth()
